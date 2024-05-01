@@ -13,20 +13,7 @@ import org.gradle.util.GradleVersion
 class DevelocityInjectionGradlePlugin implements Plugin<Gradle> {
     void apply(Gradle gradle) {
         println "Applying DEVELOCITY!"
-//        gradle.beforeSettings { settings ->
-//            configureDevelocity(settings)
-//        }
         configureDevelocity(gradle)
-    }
-
-    private void configureDevelocity(Settings settings) {
-        settings.pluginManager.apply(DevelocityPlugin)
-        settings.pluginManager.apply(CommonCustomUserDataGradlePlugin)
-
-        eachDevelocitySettingsExtension(settings) { ext ->
-            ext.server = "https://ge.solutions-team.gradle.com"
-            ext.allowUntrustedServer = false
-        }
     }
 
     private void configureDevelocity(Gradle gradle) {
@@ -53,12 +40,13 @@ class DevelocityInjectionGradlePlugin implements Plugin<Gradle> {
             return System.getProperty(name) ?: System.getenv(envVarName)
         }
 
-        def requestedInitScriptName = getInputParam('develocity.injection.init-script-name')
-        def initScriptName = buildscript.sourceFile.name
-        if (requestedInitScriptName != initScriptName) {
-            logger.quiet("Ignoring init script '${initScriptName}' as requested name '${requestedInitScriptName}' does not match")
-            return
-        }
+        // TODO: decide if we need this
+//        def requestedInitScriptName = getInputParam('develocity.injection.init-script-name')
+//        def initScriptName = buildscript.sourceFile.name
+//        if (requestedInitScriptName != initScriptName) {
+//            logger.quiet("Ignoring init script '${initScriptName}' as requested name '${requestedInitScriptName}' does not match")
+//            return
+//        }
 
 // finish early if injection is disabled
         def gradleInjectionEnabled = getInputParam("develocity.injection-enabled")
@@ -182,6 +170,9 @@ class DevelocityInjectionGradlePlugin implements Plugin<Gradle> {
                         if (!ccudPluginComponent) {
                             logger.lifecycle("Applying $CCUD_PLUGIN_CLASS via init script")
                             pluginManager.apply(initscript.classLoader.loadClass(CCUD_PLUGIN_CLASS))
+                            // TODO: Make sure this works
+//                            pluginManager.apply(gradle.initscript.classLoader.loadClass(CCUD_PLUGIN_CLASS))
+                            settings.pluginManager.apply(CommonCustomUserDataGradlePlugin)
                         }
                     }
                 }
@@ -259,6 +250,9 @@ class DevelocityInjectionGradlePlugin implements Plugin<Gradle> {
                     if (!settings.pluginManager.hasPlugin(CCUD_PLUGIN_ID)) {
                         logger.lifecycle("Applying $CCUD_PLUGIN_CLASS via init script")
                         settings.pluginManager.apply(initscript.classLoader.loadClass(CCUD_PLUGIN_CLASS))
+                        // TODO: Make sure this works
+//                        settings.pluginManager.apply(initscript.classLoader.loadClass(CCUD_PLUGIN_CLASS))
+                        settings.pluginManager.apply(CommonCustomUserDataGradlePlugin)
                     }
                 }
             }
@@ -273,7 +267,10 @@ class DevelocityInjectionGradlePlugin implements Plugin<Gradle> {
         System.setProperty(externallyApplied, 'true')
         System.setProperty(externallyAppliedDeprecated, 'true')
         try {
-            pluginManager.apply(initscript.classLoader.loadClass(pluginClassName))
+            // TODO: Make sure this works
+//            pluginManager.apply(initscript.classLoader.loadClass(pluginClassName))
+            pluginManager.apply(DevelocityPlugin)
+
         } finally {
             if (oldValue == null) {
                 System.clearProperty(externallyApplied)
