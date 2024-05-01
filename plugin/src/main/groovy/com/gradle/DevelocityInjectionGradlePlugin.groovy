@@ -3,6 +3,7 @@ package com.gradle;
 import com.gradle.develocity.agent.gradle.DevelocityPlugin
 import org.gradle.api.Plugin
 import org.gradle.api.artifacts.ResolvableDependencies
+import org.gradle.api.initialization.Settings
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.logging.Logging
 import org.gradle.util.GradleVersion
@@ -14,7 +15,12 @@ class DevelocityInjectionGradlePlugin implements Plugin<Gradle> {
     private def logger = Logging.getLogger(DevelocityInjectionGradlePlugin)
 
     void apply(Gradle gradle) {
-        configureDevelocity(gradle)
+        logger.lifecycle("before settingsEvaluated")
+        gradle.settingsEvaluated { Settings settings ->
+            logger.lifecycle("inside settingsEvaluated")
+        }
+        logger.lifecycle("after settingsEvaluated")
+//        configureDevelocity(gradle)
     }
 
     private void configureDevelocity(Gradle gradle) {

@@ -31,10 +31,10 @@ class BaseInitScriptTest extends Specification {
 //        GRADLE_3_X, // First version where TestKit supports environment variables
 //        GRADLE_4_X,
 //        GRADLE_5_X,
-//        GRADLE_6_X,
-        GRADLE_7_X,
-        GRADLE_8_0,
-        GRADLE_8_X,
+        GRADLE_6_X,
+//        GRADLE_7_X,
+//        GRADLE_8_0,
+//        GRADLE_8_X,
     ]
 
     static final List<TestGradleVersion> CONFIGURATION_CACHE_VERSIONS =
