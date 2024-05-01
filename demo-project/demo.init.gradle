@@ -1,0 +1,94 @@
+import org.gradle.util.GradleVersion
+
+initscript {
+    def isTopLevelBuild = !gradle.parent
+    if (!isTopLevelBuild) {
+        return
+    }
+
+    def getInputParam = { String name ->
+        def envVarName = name.toUpperCase().replace('.', '_').replace('-', '_')
+        return System.getProperty(name) ?: System.getenv(envVarName)
+    }
+
+    // finish early if injection is disabled
+    def gradleInjectionEnabled = getInputParam("develocity.injection-enabled")
+    if (gradleInjectionEnabled != "true") {
+        return
+    }
+
+    def pluginRepositoryUrl = getInputParam('gradle.plugin-repository.url')
+    def pluginRepositoryUsername = getInputParam('gradle.plugin-repository.username')
+    def pluginRepositoryPassword = getInputParam('gradle.plugin-repository.password')
+    def develocityPluginVersion = getInputParam('develocity.plugin.version')
+    def ccudPluginVersion = getInputParam('develocity.ccud-plugin.version')
+
+    def atLeastGradle5 = GradleVersion.current() >= GradleVersion.version('5.0')
+    def atLeastGradle4 = GradleVersion.current() >= GradleVersion.version('4.0')
+
+    repositories {
+        gradlePluginPortal()
+        maven {
+            url = '../build/local-repo'
+        }
+    }
+
+    if (develocityPluginVersion || ccudPluginVersion && atLeastGradle4) {
+        pluginRepositoryUrl = pluginRepositoryUrl ?: 'https://plugins.gradle.org/m2'
+        logger.lifecycle("Develocity plugins resolution: $pluginRepositoryUrl")
+
+        repositories {
+            maven {
+                url pluginRepositoryUrl
+                if (pluginRepositoryUsername && pluginRepositoryPassword) {
+                    logger.lifecycle("Using credentials for plugin repository")
+                    credentials {
+                        username(pluginRepositoryUsername)
+                        password(pluginRepositoryPassword)
+                    }
+                    authentication {
+                        basic(BasicAuthentication)
+                    }
+                }
+            }
+        }
+    }
+
+    dependencies {
+        classpath "com.gradle:develocity-injection-gradle-plugin:0.0.1"
+
+        if (develocityPluginVersion) {
+            if (atLeastGradle5) {
+                if (GradleVersion.version(develocityPluginVersion) >= GradleVersion.version("3.17")) {
+                    classpath "com.gradle:develocity-gradle-plugin:$develocityPluginVersion"
+                } else {
+                    classpath "com.gradle:gradle-enterprise-gradle-plugin:$develocityPluginVersion"
+                }
+            } else {
+                classpath "com.gradle:build-scan-plugin:1.16"
+            }
+        }
+
+        if (ccudPluginVersion && atLeastGradle4) {
+            classpath "com.gradle:common-custom-user-data-gradle-plugin:$ccudPluginVersion"
+        }
+    }
+}
+
+def isTopLevelBuild = !gradle.parent
+if (!isTopLevelBuild) {
+    return
+}
+
+def getInputParam = { String name ->
+    def envVarName = name.toUpperCase().replace('.', '_').replace('-', '_')
+    return System.getProperty(name) ?: System.getenv(envVarName)
+}
+
+// finish early if injection is disabled
+def gradleInjectionEnabled = getInputParam("develocity.injection-enabled")
+if (gradleInjectionEnabled != "true") {
+    return
+}
+
+pluginManager.apply(com.gradle.DevelocityInjectionGradlePlugin)
