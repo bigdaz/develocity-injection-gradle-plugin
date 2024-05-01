@@ -30,7 +30,6 @@ initscript {
     def atLeastGradle4 = GradleVersion.current() >= GradleVersion.version('4.0')
 
     repositories {
-        gradlePluginPortal()
         maven {
             url = testPluginRepository
         }
