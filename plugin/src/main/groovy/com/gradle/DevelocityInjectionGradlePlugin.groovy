@@ -170,9 +170,7 @@ class DevelocityInjectionGradlePlugin implements Plugin<Gradle> {
                         }
                         if (!ccudPluginComponent) {
                             logger.lifecycle("Applying $CCUD_PLUGIN_CLASS via init script")
-                            // TODO: Make sure this works
-//                            pluginManager.apply(gradle.initscript.classLoader.loadClass(CCUD_PLUGIN_CLASS))
-                            settings.pluginManager.apply(CommonCustomUserDataGradlePlugin)
+                            pluginManager.apply(getClass().classLoader.loadClass(CCUD_PLUGIN_CLASS))
                         }
                     }
                 }
@@ -249,9 +247,7 @@ class DevelocityInjectionGradlePlugin implements Plugin<Gradle> {
                 if (ccudPluginVersion) {
                     if (!settings.pluginManager.hasPlugin(CCUD_PLUGIN_ID)) {
                         logger.lifecycle("Applying $CCUD_PLUGIN_CLASS via init script")
-                        // TODO: Make sure this works
-//                        settings.pluginManager.apply(initscript.classLoader.loadClass(CCUD_PLUGIN_CLASS))
-                        settings.pluginManager.apply(CommonCustomUserDataGradlePlugin)
+                        settings.pluginManager.apply(getClass().classLoader.loadClass(CCUD_PLUGIN_CLASS))
                     }
                 }
             }
@@ -266,10 +262,7 @@ class DevelocityInjectionGradlePlugin implements Plugin<Gradle> {
         System.setProperty(externallyApplied, 'true')
         System.setProperty(externallyAppliedDeprecated, 'true')
         try {
-            // TODO: Make sure this works
-//            pluginManager.apply(initscript.classLoader.loadClass(pluginClassName))
-            pluginManager.apply(DevelocityPlugin)
-
+            pluginManager.apply(getClass().classLoader.loadClass(pluginClassName))
         } finally {
             if (oldValue == null) {
                 System.clearProperty(externallyApplied)
