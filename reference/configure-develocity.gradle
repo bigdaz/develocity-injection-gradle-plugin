@@ -23,13 +23,16 @@ initscript {
     def develocityPluginVersion = getInputParam('develocity.plugin.version')
     def ccudPluginVersion = getInputParam('develocity.ccud-plugin.version')
 
+    def testPluginRepository = getInputParam('develocity.test.plugin-repository') ?: '../build/local-repo'
+    def testPluginVersion = getInputParam('develocity.test.plugin-version') ?: '0.0.1'
+
     def atLeastGradle5 = GradleVersion.current() >= GradleVersion.version('5.0')
     def atLeastGradle4 = GradleVersion.current() >= GradleVersion.version('4.0')
 
     repositories {
         gradlePluginPortal()
         maven {
-            url = '../build/local-repo'
+            url = testPluginRepository
         }
     }
 
@@ -55,7 +58,7 @@ initscript {
     }
 
     dependencies {
-        classpath "com.gradle:develocity-injection-gradle-plugin:0.0.1"
+        classpath "com.gradle:develocity-injection-gradle-plugin:${testPluginVersion}"
 
         if (develocityPluginVersion) {
             if (atLeastGradle5) {
