@@ -1,5 +1,6 @@
 initscript {
     repositories {
+        gradlePluginPortal()
         maven {
             url = uri("../build/local-repo")
         }
