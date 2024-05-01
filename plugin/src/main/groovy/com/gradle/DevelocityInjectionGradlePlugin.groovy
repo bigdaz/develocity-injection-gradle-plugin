@@ -95,7 +95,7 @@ class DevelocityInjectionGradlePlugin implements Plugin<Gradle> {
                         }
                         if (!scanPluginComponent) {
                             def pluginClass = dvOrGe(DEVELOCITY_PLUGIN_CLASS, BUILD_SCAN_PLUGIN_CLASS)
-                            logger.lifecycle("Applying $pluginClass:$develocityPluginVersion via init script")
+                            logger.lifecycle("Applying $pluginClass via init script")
                             applyPluginExternally(pluginManager, pluginClass)
                             def rootExtension = dvOrGe(
                                     { develocity },
@@ -169,7 +169,7 @@ class DevelocityInjectionGradlePlugin implements Plugin<Gradle> {
                             it.moduleVersion.with { group == "com.gradle" && name == "common-custom-user-data-gradle-plugin" }
                         }
                         if (!ccudPluginComponent) {
-                            logger.lifecycle("Applying $CCUD_PLUGIN_CLASS:$ccudPluginVersion via init script")
+                            logger.lifecycle("Applying $CCUD_PLUGIN_CLASS via init script")
                             pluginManager.apply(getClass().classLoader.loadClass(CCUD_PLUGIN_CLASS))
                         }
                     }
@@ -180,7 +180,7 @@ class DevelocityInjectionGradlePlugin implements Plugin<Gradle> {
                 if (develocityPluginVersion) {
                     if (!settings.pluginManager.hasPlugin(GRADLE_ENTERPRISE_PLUGIN_ID) && !settings.pluginManager.hasPlugin(DEVELOCITY_PLUGIN_ID)) {
                         def pluginClass = dvOrGe(DEVELOCITY_PLUGIN_CLASS, GRADLE_ENTERPRISE_PLUGIN_CLASS)
-                        logger.lifecycle("Applying $pluginClass:$develocityPluginVersion via init script")
+                        logger.lifecycle("Applying $pluginClass via init script")
                         applyPluginExternally(settings.pluginManager, pluginClass)
                         if (develocityUrl) {
                             logger.lifecycle("Connection to Develocity: $develocityUrl, allowUntrustedServer: $develocityAllowUntrustedServer, captureFileFingerprints: $develocityCaptureFileFingerprints")
@@ -246,7 +246,7 @@ class DevelocityInjectionGradlePlugin implements Plugin<Gradle> {
 
                 if (ccudPluginVersion) {
                     if (!settings.pluginManager.hasPlugin(CCUD_PLUGIN_ID)) {
-                        logger.lifecycle("Applying $CCUD_PLUGIN_CLASS:$ccudPluginVersion via init script")
+                        logger.lifecycle("Applying $CCUD_PLUGIN_CLASS via init script")
                         settings.pluginManager.apply(getClass().classLoader.loadClass(CCUD_PLUGIN_CLASS))
                     }
                 }
