@@ -78,7 +78,7 @@ class DevelocityInjectionGradlePlugin implements Plugin<Gradle> {
 
 // finish early if configuration parameters passed in via system properties are not valid/supported
         if (ccudPluginVersion && isNotAtLeast(ccudPluginVersion, '1.7')) {
-            logger.warn("Common Custom User Data Gradle plugin must be at least 1.7. Configured version is $ccudPluginVersion.")
+            println("Common Custom User Data Gradle plugin must be at least 1.7. Configured version is $ccudPluginVersion.")
             return
         }
 
@@ -94,7 +94,7 @@ class DevelocityInjectionGradlePlugin implements Plugin<Gradle> {
                         }
                         if (!scanPluginComponent) {
                             def pluginClass = dvOrGe(DEVELOCITY_PLUGIN_CLASS, BUILD_SCAN_PLUGIN_CLASS)
-                            logger.lifecycle("Applying $pluginClass via init script")
+                            println("Applying $pluginClass via init script")
                             applyPluginExternally(pluginManager, pluginClass)
                             def rootExtension = dvOrGe(
                                     { develocity },
@@ -105,7 +105,7 @@ class DevelocityInjectionGradlePlugin implements Plugin<Gradle> {
                                     { rootExtension }
                             )
                             if (develocityUrl) {
-                                logger.lifecycle("Connection to Develocity: $develocityUrl, allowUntrustedServer: $develocityAllowUntrustedServer, captureFileFingerprints: $develocityCaptureFileFingerprints")
+                                println("Connection to Develocity: $develocityUrl, allowUntrustedServer: $develocityAllowUntrustedServer, captureFileFingerprints: $develocityCaptureFileFingerprints")
                                 rootExtension.server = develocityUrl
                                 rootExtension.allowUntrustedServer = develocityAllowUntrustedServer
                             }
@@ -117,7 +117,7 @@ class DevelocityInjectionGradlePlugin implements Plugin<Gradle> {
                             if (buildScanExtension.metaClass.respondsTo(buildScanExtension, 'setUploadInBackground', Boolean)) buildScanExtension.uploadInBackground = buildScanUploadInBackground
                             buildScanExtension.value CI_AUTO_INJECTION_CUSTOM_VALUE_NAME, ciAutoInjectionCustomValueValue
                             if (isAtLeast(develocityPluginVersion, '2.1') && atLeastGradle5) {
-                                logger.lifecycle("Setting captureFileFingerprints: $develocityCaptureFileFingerprints")
+                                println("Setting captureFileFingerprints: $develocityCaptureFileFingerprints")
                                 if (isAtLeast(develocityPluginVersion, '3.17')) {
                                     buildScanExtension.capture.fileFingerprints.set(develocityCaptureFileFingerprints)
                                 } else if (isAtLeast(develocityPluginVersion, '3.7')) {
@@ -129,7 +129,7 @@ class DevelocityInjectionGradlePlugin implements Plugin<Gradle> {
                         }
 
                         if (develocityUrl && develocityEnforceUrl) {
-                            logger.lifecycle("Enforcing Develocity: $develocityUrl, allowUntrustedServer: $develocityAllowUntrustedServer, captureFileFingerprints: $develocityCaptureFileFingerprints")
+                            println("Enforcing Develocity: $develocityUrl, allowUntrustedServer: $develocityAllowUntrustedServer, captureFileFingerprints: $develocityCaptureFileFingerprints")
                         }
 
                         pluginManager.withPlugin(BUILD_SCAN_PLUGIN_ID) {
@@ -168,8 +168,7 @@ class DevelocityInjectionGradlePlugin implements Plugin<Gradle> {
                             it.moduleVersion.with { group == "com.gradle" && name == "common-custom-user-data-gradle-plugin" }
                         }
                         if (!ccudPluginComponent) {
-                            logger.lifecycle("Applying $CCUD_PLUGIN_CLASS via init script")
-                            pluginManager.apply(initscript.classLoader.loadClass(CCUD_PLUGIN_CLASS))
+                            println("Applying $CCUD_PLUGIN_CLASS via init script")
                             // TODO: Make sure this works
 //                            pluginManager.apply(gradle.initscript.classLoader.loadClass(CCUD_PLUGIN_CLASS))
                             settings.pluginManager.apply(CommonCustomUserDataGradlePlugin)
@@ -182,10 +181,10 @@ class DevelocityInjectionGradlePlugin implements Plugin<Gradle> {
                 if (develocityPluginVersion) {
                     if (!settings.pluginManager.hasPlugin(GRADLE_ENTERPRISE_PLUGIN_ID) && !settings.pluginManager.hasPlugin(DEVELOCITY_PLUGIN_ID)) {
                         def pluginClass = dvOrGe(DEVELOCITY_PLUGIN_CLASS, GRADLE_ENTERPRISE_PLUGIN_CLASS)
-                        logger.lifecycle("Applying $pluginClass via init script")
+                        println("Applying $pluginClass via init script")
                         applyPluginExternally(settings.pluginManager, pluginClass)
                         if (develocityUrl) {
-                            logger.lifecycle("Connection to Develocity: $develocityUrl, allowUntrustedServer: $develocityAllowUntrustedServer, captureFileFingerprints: $develocityCaptureFileFingerprints")
+                            println("Connection to Develocity: $develocityUrl, allowUntrustedServer: $develocityAllowUntrustedServer, captureFileFingerprints: $develocityCaptureFileFingerprints")
                             eachDevelocitySettingsExtension(settings) { ext ->
                                 ext.server = develocityUrl
                                 ext.allowUntrustedServer = develocityAllowUntrustedServer
@@ -199,13 +198,13 @@ class DevelocityInjectionGradlePlugin implements Plugin<Gradle> {
 
                         eachDevelocitySettingsExtension(settings,
                                 { develocity ->
-                                    logger.lifecycle("Setting captureFileFingerprints: $develocityCaptureFileFingerprints")
+                                    println("Setting captureFileFingerprints: $develocityCaptureFileFingerprints")
                                     develocity.buildScan.capture.fileFingerprints = develocityCaptureFileFingerprints
                                 },
                                 { gradleEnterprise ->
                                     gradleEnterprise.buildScan.publishAlways()
                                     if (isAtLeast(develocityPluginVersion, '2.1')) {
-                                        logger.lifecycle("Setting captureFileFingerprints: $develocityCaptureFileFingerprints")
+                                        println("Setting captureFileFingerprints: $develocityCaptureFileFingerprints")
                                         if (isAtLeast(develocityPluginVersion, '3.7')) {
                                             gradleEnterprise.buildScan.capture.taskInputFiles = develocityCaptureFileFingerprints
                                         } else {
@@ -217,7 +216,7 @@ class DevelocityInjectionGradlePlugin implements Plugin<Gradle> {
                     }
 
                     if (develocityUrl && develocityEnforceUrl) {
-                        logger.lifecycle("Enforcing Develocity: $develocityUrl, allowUntrustedServer: $develocityAllowUntrustedServer, captureFileFingerprints: $develocityCaptureFileFingerprints")
+                        println("Enforcing Develocity: $develocityUrl, allowUntrustedServer: $develocityAllowUntrustedServer, captureFileFingerprints: $develocityCaptureFileFingerprints")
                     }
 
                     eachDevelocitySettingsExtension(settings,
@@ -248,8 +247,7 @@ class DevelocityInjectionGradlePlugin implements Plugin<Gradle> {
 
                 if (ccudPluginVersion) {
                     if (!settings.pluginManager.hasPlugin(CCUD_PLUGIN_ID)) {
-                        logger.lifecycle("Applying $CCUD_PLUGIN_CLASS via init script")
-                        settings.pluginManager.apply(initscript.classLoader.loadClass(CCUD_PLUGIN_CLASS))
+                        println("Applying $CCUD_PLUGIN_CLASS via init script")
                         // TODO: Make sure this works
 //                        settings.pluginManager.apply(initscript.classLoader.loadClass(CCUD_PLUGIN_CLASS))
                         settings.pluginManager.apply(CommonCustomUserDataGradlePlugin)
