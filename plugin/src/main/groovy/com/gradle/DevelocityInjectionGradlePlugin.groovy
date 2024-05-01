@@ -3,16 +3,17 @@ package com.gradle;
 import com.gradle.develocity.agent.gradle.DevelocityPlugin
 import org.gradle.api.Plugin
 import org.gradle.api.artifacts.ResolvableDependencies
-import org.gradle.api.initialization.Settings
 import org.gradle.api.invocation.Gradle
+import org.gradle.api.logging.Logging
 import org.gradle.util.GradleVersion
 
 /**
  * A simple 'hello world' plugin.
  */
 class DevelocityInjectionGradlePlugin implements Plugin<Gradle> {
+    private def logger = Logging.getLogger(DevelocityInjectionGradlePlugin)
+
     void apply(Gradle gradle) {
-        println "Applying DEVELOCITY!"
         configureDevelocity(gradle)
     }
 
@@ -78,7 +79,7 @@ class DevelocityInjectionGradlePlugin implements Plugin<Gradle> {
 
 // finish early if configuration parameters passed in via system properties are not valid/supported
         if (ccudPluginVersion && isNotAtLeast(ccudPluginVersion, '1.7')) {
-            println("Common Custom User Data Gradle plugin must be at least 1.7. Configured version is $ccudPluginVersion.")
+            logger.warn("Common Custom User Data Gradle plugin must be at least 1.7. Configured version is $ccudPluginVersion.")
             return
         }
 
@@ -94,7 +95,7 @@ class DevelocityInjectionGradlePlugin implements Plugin<Gradle> {
                         }
                         if (!scanPluginComponent) {
                             def pluginClass = dvOrGe(DEVELOCITY_PLUGIN_CLASS, BUILD_SCAN_PLUGIN_CLASS)
-                            println("Applying $pluginClass via init script")
+                            logger.lifecycle("Applying $pluginClass via init script")
                             applyPluginExternally(pluginManager, pluginClass)
                             def rootExtension = dvOrGe(
                                     { develocity },
@@ -105,7 +106,7 @@ class DevelocityInjectionGradlePlugin implements Plugin<Gradle> {
                                     { rootExtension }
                             )
                             if (develocityUrl) {
-                                println("Connection to Develocity: $develocityUrl, allowUntrustedServer: $develocityAllowUntrustedServer, captureFileFingerprints: $develocityCaptureFileFingerprints")
+                                logger.lifecycle("Connection to Develocity: $develocityUrl, allowUntrustedServer: $develocityAllowUntrustedServer, captureFileFingerprints: $develocityCaptureFileFingerprints")
                                 rootExtension.server = develocityUrl
                                 rootExtension.allowUntrustedServer = develocityAllowUntrustedServer
                             }
@@ -117,7 +118,7 @@ class DevelocityInjectionGradlePlugin implements Plugin<Gradle> {
                             if (buildScanExtension.metaClass.respondsTo(buildScanExtension, 'setUploadInBackground', Boolean)) buildScanExtension.uploadInBackground = buildScanUploadInBackground
                             buildScanExtension.value CI_AUTO_INJECTION_CUSTOM_VALUE_NAME, ciAutoInjectionCustomValueValue
                             if (isAtLeast(develocityPluginVersion, '2.1') && atLeastGradle5) {
-                                println("Setting captureFileFingerprints: $develocityCaptureFileFingerprints")
+                                logger.lifecycle("Setting captureFileFingerprints: $develocityCaptureFileFingerprints")
                                 if (isAtLeast(develocityPluginVersion, '3.17')) {
                                     buildScanExtension.capture.fileFingerprints.set(develocityCaptureFileFingerprints)
                                 } else if (isAtLeast(develocityPluginVersion, '3.7')) {
@@ -129,7 +130,7 @@ class DevelocityInjectionGradlePlugin implements Plugin<Gradle> {
                         }
 
                         if (develocityUrl && develocityEnforceUrl) {
-                            println("Enforcing Develocity: $develocityUrl, allowUntrustedServer: $develocityAllowUntrustedServer, captureFileFingerprints: $develocityCaptureFileFingerprints")
+                            logger.lifecycle("Enforcing Develocity: $develocityUrl, allowUntrustedServer: $develocityAllowUntrustedServer, captureFileFingerprints: $develocityCaptureFileFingerprints")
                         }
 
                         pluginManager.withPlugin(BUILD_SCAN_PLUGIN_ID) {
@@ -168,7 +169,7 @@ class DevelocityInjectionGradlePlugin implements Plugin<Gradle> {
                             it.moduleVersion.with { group == "com.gradle" && name == "common-custom-user-data-gradle-plugin" }
                         }
                         if (!ccudPluginComponent) {
-                            println("Applying $CCUD_PLUGIN_CLASS via init script")
+                            logger.lifecycle("Applying $CCUD_PLUGIN_CLASS via init script")
                             // TODO: Make sure this works
 //                            pluginManager.apply(gradle.initscript.classLoader.loadClass(CCUD_PLUGIN_CLASS))
                             settings.pluginManager.apply(CommonCustomUserDataGradlePlugin)
@@ -181,10 +182,10 @@ class DevelocityInjectionGradlePlugin implements Plugin<Gradle> {
                 if (develocityPluginVersion) {
                     if (!settings.pluginManager.hasPlugin(GRADLE_ENTERPRISE_PLUGIN_ID) && !settings.pluginManager.hasPlugin(DEVELOCITY_PLUGIN_ID)) {
                         def pluginClass = dvOrGe(DEVELOCITY_PLUGIN_CLASS, GRADLE_ENTERPRISE_PLUGIN_CLASS)
-                        println("Applying $pluginClass via init script")
+                        logger.lifecycle("Applying $pluginClass via init script")
                         applyPluginExternally(settings.pluginManager, pluginClass)
                         if (develocityUrl) {
-                            println("Connection to Develocity: $develocityUrl, allowUntrustedServer: $develocityAllowUntrustedServer, captureFileFingerprints: $develocityCaptureFileFingerprints")
+                            logger.lifecycle("Connection to Develocity: $develocityUrl, allowUntrustedServer: $develocityAllowUntrustedServer, captureFileFingerprints: $develocityCaptureFileFingerprints")
                             eachDevelocitySettingsExtension(settings) { ext ->
                                 ext.server = develocityUrl
                                 ext.allowUntrustedServer = develocityAllowUntrustedServer
@@ -198,13 +199,13 @@ class DevelocityInjectionGradlePlugin implements Plugin<Gradle> {
 
                         eachDevelocitySettingsExtension(settings,
                                 { develocity ->
-                                    println("Setting captureFileFingerprints: $develocityCaptureFileFingerprints")
+                                    logger.lifecycle("Setting captureFileFingerprints: $develocityCaptureFileFingerprints")
                                     develocity.buildScan.capture.fileFingerprints = develocityCaptureFileFingerprints
                                 },
                                 { gradleEnterprise ->
                                     gradleEnterprise.buildScan.publishAlways()
                                     if (isAtLeast(develocityPluginVersion, '2.1')) {
-                                        println("Setting captureFileFingerprints: $develocityCaptureFileFingerprints")
+                                        logger.lifecycle("Setting captureFileFingerprints: $develocityCaptureFileFingerprints")
                                         if (isAtLeast(develocityPluginVersion, '3.7')) {
                                             gradleEnterprise.buildScan.capture.taskInputFiles = develocityCaptureFileFingerprints
                                         } else {
@@ -216,7 +217,7 @@ class DevelocityInjectionGradlePlugin implements Plugin<Gradle> {
                     }
 
                     if (develocityUrl && develocityEnforceUrl) {
-                        println("Enforcing Develocity: $develocityUrl, allowUntrustedServer: $develocityAllowUntrustedServer, captureFileFingerprints: $develocityCaptureFileFingerprints")
+                        logger.lifecycle("Enforcing Develocity: $develocityUrl, allowUntrustedServer: $develocityAllowUntrustedServer, captureFileFingerprints: $develocityCaptureFileFingerprints")
                     }
 
                     eachDevelocitySettingsExtension(settings,
@@ -247,7 +248,7 @@ class DevelocityInjectionGradlePlugin implements Plugin<Gradle> {
 
                 if (ccudPluginVersion) {
                     if (!settings.pluginManager.hasPlugin(CCUD_PLUGIN_ID)) {
-                        println("Applying $CCUD_PLUGIN_CLASS via init script")
+                        logger.lifecycle("Applying $CCUD_PLUGIN_CLASS via init script")
                         // TODO: Make sure this works
 //                        settings.pluginManager.apply(initscript.classLoader.loadClass(CCUD_PLUGIN_CLASS))
                         settings.pluginManager.apply(CommonCustomUserDataGradlePlugin)
@@ -293,14 +294,14 @@ class DevelocityInjectionGradlePlugin implements Plugin<Gradle> {
         def DEVELOCITY_CONFIGURATION_CLASS = 'com.gradle.develocity.agent.gradle.DevelocityConfiguration'
 
         def dvExtensions = settings.extensions.extensionsSchema.elements
-            .findAll { it.publicType.concreteClass.name == DEVELOCITY_CONFIGURATION_CLASS }
-            .collect { settings[it.name] }
+                .findAll { it.publicType.concreteClass.name == DEVELOCITY_CONFIGURATION_CLASS }
+                .collect { settings[it.name] }
         if (!dvExtensions.empty) {
             dvExtensions.each(dvAction)
         } else {
             def geExtensions = settings.extensions.extensionsSchema.elements
-                .findAll { it.publicType.concreteClass.name == GRADLE_ENTERPRISE_EXTENSION_CLASS }
-                .collect { settings[it.name] }
+                    .findAll { it.publicType.concreteClass.name == GRADLE_ENTERPRISE_EXTENSION_CLASS }
+                    .collect { settings[it.name] }
             geExtensions.each(geAction)
         }
     }
