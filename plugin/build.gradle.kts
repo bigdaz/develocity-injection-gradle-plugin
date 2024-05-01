@@ -62,5 +62,7 @@ tasks.named<Test>("test") {
     dependsOn(tasks.publish)
     useJUnitPlatform()
     workingDir = projectDir
-    systemProperty("local.repo", localRepo.get().asFile.toPath().toString())
+    systemProperty("local.repo", localRepo.get().asFile.absolutePath)
+    systemProperty("initScript", rootProject.layout.projectDirectory.file("reference/configure-develocity.gradle").asFile.absolutePath)
+    systemProperty("pluginVersion", version)
 }

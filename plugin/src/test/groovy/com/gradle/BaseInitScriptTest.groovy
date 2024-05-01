@@ -116,7 +116,7 @@ class BaseInitScriptTest extends Specification {
         settingsFile = new File(testProjectDir, 'settings.gradle')
         buildFile = new File(testProjectDir, 'build.gradle')
 
-        File initScript = new File(this.getClass().getClassLoader().getResource('init-scripts/gradle-actions.inject-develocity.init.gradle').toURI())
+        File initScript = new File(System.getProperty('initScript'))
         File targetInitScriptsDir = new File(testProjectDir, "initScripts")
         targetInitScriptsDir.mkdirs()
         File targetInitScript = new File(targetInitScriptsDir, initScript.name)
@@ -209,6 +209,8 @@ task expectFailure {
     GradleRunner createRunner(List<String> args, String initScript, GradleVersion gradleVersion = GradleVersion.current(), List<String> jvmArgs = [], Map<String, String> envVars = [:]) {
         File initScriptsDir = new File(testProjectDir, "initScripts")
         args << '-I' << new File(initScriptsDir, initScript).absolutePath
+                << "-Ddevelocity.test.plugin-repository=${System.getProperty('local.repo')}".toString()
+                << "-Ddevelocity.test.plugin-version=${System.getProperty('pluginVersion')}".toString()
 
         def runner = ((DefaultGradleRunner) GradleRunner.create())
             .withGradleVersion(gradleVersion.version)
