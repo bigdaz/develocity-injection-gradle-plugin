@@ -9,7 +9,7 @@ import static org.junit.Assume.assumeTrue
 class TestDevelocityInjection extends BaseInitScriptTest {
     static final List<TestGradleVersion> CCUD_COMPATIBLE_VERSIONS = ALL_VERSIONS - [GRADLE_3_X]
 
-    def initScript = 'gradle-actions.inject-develocity.init.gradle'
+    def initScript = new File(this.getClass().getClassLoader().getResource('init.gradle').toURI())
 
     private static final GradleVersion GRADLE_5 = GradleVersion.version('5.0')
 

@@ -52,6 +52,12 @@ fun releaseVersion(): Provider<String> {
     return providers.fileContents(releaseVersionFile).asText.map { it.trim() }
 }
 
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(8))
+    }
+}
+
 tasks.named<Test>("test") {
     useJUnitPlatform()
 }

@@ -201,19 +201,19 @@ task expectFailure {
 '''
     }
 
-    BuildResult run(List<String> args, String initScript, GradleVersion gradleVersion = GradleVersion.current(), List<String> jvmArgs = [], Map<String, String> envVars = [:]) {
+    BuildResult run(List<String> args, File initScript, GradleVersion gradleVersion = GradleVersion.current(), List<String> jvmArgs = [], Map<String, String> envVars = [:]) {
         def result = createRunner(args, initScript, gradleVersion, jvmArgs, envVars).build()
         assertNoDeprecationWarning(result)
     }
 
-    BuildResult runAndFail(List<String> args, String initScript, GradleVersion gradleVersion = GradleVersion.current(), List<String> jvmArgs = [], Map<String, String> envVars = [:]) {
+    BuildResult runAndFail(List<String> args, File initScript, GradleVersion gradleVersion = GradleVersion.current(), List<String> jvmArgs = [], Map<String, String> envVars = [:]) {
         def result = createRunner(args, initScript, gradleVersion, jvmArgs, envVars).buildAndFail()
         assertNoDeprecationWarning(result)
     }
 
-    GradleRunner createRunner(List<String> args, String initScript, GradleVersion gradleVersion = GradleVersion.current(), List<String> jvmArgs = [], Map<String, String> envVars = [:]) {
+    GradleRunner createRunner(List<String> args, File initScript, GradleVersion gradleVersion = GradleVersion.current(), List<String> jvmArgs = [], Map<String, String> envVars = [:]) {
         File initScriptsDir = new File(testProjectDir, "initScripts")
-        args << '-I' << new File(initScriptsDir, initScript).absolutePath
+        args << '-I' << initScript.absolutePath
 
         def runner = ((DefaultGradleRunner) GradleRunner.create())
             .withGradleVersion(gradleVersion.version)
