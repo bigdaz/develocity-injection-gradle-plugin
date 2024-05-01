@@ -59,5 +59,8 @@ java {
 }
 
 tasks.named<Test>("test") {
+    dependsOn(tasks.publish)
     useJUnitPlatform()
+    workingDir = projectDir
+    systemProperty("local.repo", projectDir.toPath().relativize(localRepo.get().asFile.toPath()).toString())
 }
