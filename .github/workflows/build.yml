@@ -24,4 +24,9 @@ jobs:
 
       - name: Run demo project
         working-directory: demo-project
-        run: ./gradlew -I demo.init.gradle.kts
+        run: |
+          ./gradlew -I demo.init.gradle.kts \
+          -Ddevelocity.url=https://ge.solutions-team.gradle.com/ \
+          -Ddevelocity.injection-enabled=true \
+          -Ddevelocity.plugin.version=3.17.2
+
