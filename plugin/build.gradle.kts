@@ -14,3 +14,14 @@ gradlePlugin {
         implementationClass = "com.gradle.DevelocityInjectionGradlePlugin"
     }
 }
+
+val localRepo = rootProject.layout.buildDirectory.dir("local-repo")
+
+publishing {
+    repositories {
+        maven {
+            name = "local"
+            url = localRepo.get().asFile.toURI()
+        }
+    }
+}
