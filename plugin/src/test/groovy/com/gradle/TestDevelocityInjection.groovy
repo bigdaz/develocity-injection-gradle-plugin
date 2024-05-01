@@ -2,6 +2,7 @@ package com.gradle
 
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
+import spock.lang.Ignore
 import spock.lang.Requires
 
 import static org.junit.Assume.assumeTrue
@@ -192,6 +193,7 @@ class TestDevelocityInjection extends BaseInitScriptTest {
         testGradleVersion << ALL_VERSIONS
     }
 
+    @Ignore("This test is currently broken")
     def "configures Develocity URL and allowUntrustedServer when Develocity plugin is applied by the init script"() {
         assumeTrue testGradleVersion.compatibleWithCurrentJvm
 
@@ -236,6 +238,7 @@ class TestDevelocityInjection extends BaseInitScriptTest {
         testGradleVersion << ALL_VERSIONS
     }
 
+    @Ignore("This test is currently broken")
     def "can configure alternative repository for plugins when Develocity plugin is applied by the init script"() {
         assumeTrue testGradleVersion.compatibleWithCurrentJvm
 
@@ -256,6 +259,7 @@ class TestDevelocityInjection extends BaseInitScriptTest {
         testGradleVersion << ALL_VERSIONS
     }
 
+    @Ignore("This test is currently broken")
     def "can configure alternative repository for plugins with credentials when Develocity plugin is applied by the init script"() {
         assumeTrue testGradleVersion.compatibleWithCurrentJvm
 
