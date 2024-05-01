@@ -208,9 +208,10 @@ task expectFailure {
 
     GradleRunner createRunner(List<String> args, String initScript, GradleVersion gradleVersion = GradleVersion.current(), List<String> jvmArgs = [], Map<String, String> envVars = [:]) {
         File initScriptsDir = new File(testProjectDir, "initScripts")
+
+        envVars.put("DEVELOCITY_TEST_PLUGIN_REPOSITORY", System.getProperty('local.repo'))
+        envVars.put("DEVELOCITY_TEST_PLUGIN_VERSION", System.getProperty('pluginVersion'))
         args << '-I' << new File(initScriptsDir, initScript).absolutePath
-                << "-Ddevelocity.test.plugin-repository=${System.getProperty('local.repo')}".toString()
-                << "-Ddevelocity.test.plugin-version=${System.getProperty('pluginVersion')}".toString()
 
         def runner = ((DefaultGradleRunner) GradleRunner.create())
             .withGradleVersion(gradleVersion.version)
