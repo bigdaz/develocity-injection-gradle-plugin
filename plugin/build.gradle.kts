@@ -4,7 +4,7 @@ plugins {
     alias(libs.plugins.plugin.publish)
 }
 
-group = "com.gradle.develocity"
+group = "com.gradle"
 version = releaseVersion().get()
 
 repositories {
@@ -13,14 +13,19 @@ repositories {
 
 gradlePlugin {
     val greeting by plugins.creating {
-        id = "com.gradle.develocity.develocity-injection"
-        implementationClass = "com.gradle.develocity.DevelocityInjectionGradlePlugin"
+        id = "com.gradle.develocity-injection-gradle-plugin"
+        implementationClass = "com.gradle.DevelocityInjectionGradlePlugin"
     }
 }
 
 val localRepo = rootProject.layout.buildDirectory.dir("local-repo")
 
 publishing {
+    publications {
+        withType<MavenPublication>() {
+            artifactId = "develocity-injection-gradle-plugin"
+        }
+    }
     repositories {
         maven {
             name = "local"

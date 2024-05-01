@@ -5,7 +5,7 @@ initscript {
         }
     }
     dependencies {
-        classpath("com.gradle.develocity:plugin:+")
+        classpath("com.gradle:develocity-injection-gradle-plugin:+")
     }
 }
-apply<com.gradle.develocity.DevelocityInjectionGradlePlugin>()
+apply<com.gradle.DevelocityInjectionGradlePlugin>()
