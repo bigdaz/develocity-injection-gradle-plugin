@@ -8,7 +8,13 @@ group = "com.gradle"
 version = releaseVersion().get()
 
 repositories {
+    gradlePluginPortal()
     mavenCentral()
+}
+
+dependencies {
+    implementation("com.gradle:develocity-gradle-plugin:3.17.2")
+    implementation("com.gradle:common-custom-user-data-gradle-plugin:2.0.1")
 }
 
 gradlePlugin {
