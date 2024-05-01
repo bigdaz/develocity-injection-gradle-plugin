@@ -32,8 +32,8 @@ class BaseInitScriptTest extends Specification {
 //        GRADLE_4_X,
 //        GRADLE_5_X,
 //        GRADLE_6_X,
-//        GRADLE_7_X,
-//        GRADLE_8_0,
+        GRADLE_7_X,
+        GRADLE_8_0,
         GRADLE_8_X,
     ]
 
