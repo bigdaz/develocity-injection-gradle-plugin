@@ -15,7 +15,7 @@ gradlePlugin {
     }
 }
 
-val localRepo = layout.buildDirectory.dir("local-repo")
+val localRepo = rootProject.layout.buildDirectory.dir("local-repo")
 
 publishing {
     repositories {
