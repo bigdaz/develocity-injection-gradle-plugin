@@ -1,4 +1,4 @@
-package com.gradle.develocity;
+package com.gradle;
 
 import org.gradle.api.Plugin;
 import org.gradle.api.invocation.Gradle;
