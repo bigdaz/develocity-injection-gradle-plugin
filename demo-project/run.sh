@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/bin/sh
 
 cd .. && ./gradlew clean publishAllPublicationsToLocalRepository
 
