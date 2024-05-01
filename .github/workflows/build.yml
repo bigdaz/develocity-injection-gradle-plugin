@@ -21,3 +21,7 @@ jobs:
         run: ./gradlew build publishAllPublicationsToLocalRepository
         env:
           DEVELOCITY_ACCESS_KEY: ${{ secrets.DV_ACCESS_KEY }}
+
+      - name: Run demo project
+        working-directory: demo-project
+        run: ./gradlew -I demo.init.gradle.kts
