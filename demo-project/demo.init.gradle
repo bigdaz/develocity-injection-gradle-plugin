@@ -1,0 +1,10 @@
+import com.gradle.DevelocityInjectionGradlePlugin
+initscript {
+    repositories {
+        mavenLocal()
+    }
+    dependencies {
+        classpath("develocity-injection-gradle-plugin:plugin:+")
+    }
+}
+apply plugin: DevelocityInjectionGradlePlugin
