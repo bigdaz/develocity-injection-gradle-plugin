@@ -119,14 +119,12 @@ class BaseInitScriptTest extends Specification {
         settingsFile = new File(testProjectDir, 'settings.gradle')
         buildFile = new File(testProjectDir, 'build.gradle')
 
-        File srcInitScriptsDir = new File("../../src/resources/init-scripts")
+        File initScript = new File(this.getClass().getClassLoader().getResource('init-scripts/gradle-actions.inject-develocity.init.gradle').toURI())
         File targetInitScriptsDir = new File(testProjectDir, "initScripts")
         targetInitScriptsDir.mkdirs()
+        File targetInitScript = new File(targetInitScriptsDir, initScript.name)
+        Files.copy(initScript.toPath(), targetInitScript.toPath())
 
-        for (File srcInitScript : srcInitScriptsDir.listFiles()) {
-            File targetInitScript = new File(targetInitScriptsDir, srcInitScript.name)
-            Files.copy(srcInitScript.toPath(), targetInitScript.toPath())
-        }
         settingsFile << "rootProject.name = '${ROOT_PROJECT_NAME}'\n"
         buildFile << ''
     }
@@ -201,19 +199,19 @@ task expectFailure {
 '''
     }
 
-    BuildResult run(List<String> args, File initScript, GradleVersion gradleVersion = GradleVersion.current(), List<String> jvmArgs = [], Map<String, String> envVars = [:]) {
+    BuildResult run(List<String> args, String initScript, GradleVersion gradleVersion = GradleVersion.current(), List<String> jvmArgs = [], Map<String, String> envVars = [:]) {
         def result = createRunner(args, initScript, gradleVersion, jvmArgs, envVars).build()
         assertNoDeprecationWarning(result)
     }
 
-    BuildResult runAndFail(List<String> args, File initScript, GradleVersion gradleVersion = GradleVersion.current(), List<String> jvmArgs = [], Map<String, String> envVars = [:]) {
+    BuildResult runAndFail(List<String> args, String initScript, GradleVersion gradleVersion = GradleVersion.current(), List<String> jvmArgs = [], Map<String, String> envVars = [:]) {
         def result = createRunner(args, initScript, gradleVersion, jvmArgs, envVars).buildAndFail()
         assertNoDeprecationWarning(result)
     }
 
-    GradleRunner createRunner(List<String> args, File initScript, GradleVersion gradleVersion = GradleVersion.current(), List<String> jvmArgs = [], Map<String, String> envVars = [:]) {
+    GradleRunner createRunner(List<String> args, String initScript, GradleVersion gradleVersion = GradleVersion.current(), List<String> jvmArgs = [], Map<String, String> envVars = [:]) {
         File initScriptsDir = new File(testProjectDir, "initScripts")
-        args << '-I' << initScript.absolutePath
+        args << '-I' << new File(initScriptsDir, initScript).absolutePath
 
         def runner = ((DefaultGradleRunner) GradleRunner.create())
             .withGradleVersion(gradleVersion.version)
