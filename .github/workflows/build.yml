@@ -29,4 +29,6 @@ jobs:
           -Ddevelocity.url=https://ge.solutions-team.gradle.com/ \
           -Ddevelocity.injection-enabled=true \
           -Ddevelocity.plugin.version=3.17.2
+        env:
+          DEVELOCITY_ACCESS_KEY: ${{ secrets.DV_ACCESS_KEY }}
 
