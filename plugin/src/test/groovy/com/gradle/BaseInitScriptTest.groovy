@@ -121,6 +121,14 @@ class BaseInitScriptTest extends Specification {
         targetInitScriptsDir.mkdirs()
         File targetInitScript = new File(targetInitScriptsDir, initScript.name)
         Files.copy(initScript.toPath(), targetInitScript.toPath())
+        targetInitScript.text = """initscript {
+    repositories {
+        maven {
+            url "${System.getProperty('local.repo')}"
+        }
+    }
+}
+        """ + targetInitScript.text
 
         settingsFile << "rootProject.name = '${ROOT_PROJECT_NAME}'\n"
         buildFile << ''
@@ -210,7 +218,7 @@ task expectFailure {
         File initScriptsDir = new File(testProjectDir, "initScripts")
 
         envVars.put("DEVELOCITY_TEST_PLUGIN_REPOSITORY", System.getProperty('local.repo'))
-        envVars.put("DEVELOCITY_TEST_PLUGIN_VERSION", System.getProperty('pluginVersion'))
+        envVars.put("DEVELOCITY_INJECTION_PLUGIN_VERSION", System.getProperty('pluginVersion'))
         args << '-I' << new File(initScriptsDir, initScript).absolutePath
 
         def runner = ((DefaultGradleRunner) GradleRunner.create())
