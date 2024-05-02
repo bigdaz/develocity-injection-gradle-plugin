@@ -24,11 +24,7 @@ jobs:
 
       - name: Run demo project
         working-directory: demo-project
-        run: |
-          ./gradlew -I ../reference/configure-develocity.gradle \
-          -Ddevelocity.url=https://ge.solutions-team.gradle.com/ \
-          -Ddevelocity.injection-enabled=true \
-          -Ddevelocity.plugin.version=3.17.2
+        run: ./run.sh
         env:
           DEVELOCITY_ACCESS_KEY: ${{ secrets.DV_ACCESS_KEY }}
 
